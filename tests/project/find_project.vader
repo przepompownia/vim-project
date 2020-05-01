@@ -1,0 +1,28 @@
+Include (Prepare project directories): lib/create_fixtures_directory.vader
+
+Execute (Ensure that the repository is empty):
+  Assert g:projectRepository.isEmpty()
+
+Then (Find the project in an empty repository):
+  let rootPath = fnamemodify(g:projectDirs['SillyWalksProject'], ':p')
+  let file = rootPath . '/subdir/foo.strangeext'
+
+  let project = g:projectRepository.findProjectContainingFile(file)
+
+  AssertEqual v:null, project
+
+Execute (Check if there is a project containing the file):
+  let existingProject = project#project#createFromRootPath(rootPath)
+  let subProject = project#project#createFromRootPath(rootPath.'/subdir')
+
+  call g:projectRepository.addProject(existingProject)
+  call g:projectRepository.addProject(subProject)
+
+  let project = g:projectRepository.findProjectContainingFile(file)
+
+  AssertEqual subProject, project
+
+  AssertEqual type({}), type(project)
+
+Execute (Try to add the same project again):
+  AssertThrows call g:projectRepository.addProject(existingProject)

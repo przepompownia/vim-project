@@ -1,0 +1,30 @@
+Before:
+  Save g:projectDirs
+  Save g:projectRootPatterns
+  Save g:projectGlobalRootPatterns
+  Save g:projectInitialCwd
+
+  let fixtureDir = tempname()
+  let g:projectDirs = {
+    \'SillyWalksProject': fixtureDir.'/SillyWalksProject',
+    \'TwoShedsProject': g:fixtureDir.'/TwoShedsProject'
+    \ }
+
+  call mkdir(g:projectDirs['SillyWalksProject'].'/subdir', 'p')
+  call mkdir(g:projectDirs['TwoShedsProject'].'/subdir', 'p')
+
+  let g:projectGlobalRootPatterns = ['/', '/home']
+  let g:projectRootPatterns = ['composer.json', '.git', '.project.json', '.project.yml']
+  let g:projectInitialCwd = '/'
+  let g:projectNoninteractiveResolvers = ['rootMarkers']
+  let g:projectRepository = project#repository#create()
+  let g:projectAssigner = project#assigner#create(
+      \ g:projectRepository,
+      \ g:projectRootPatterns,
+      \ g:projectGlobalRootPatterns,
+      \ g:projectInitialCwd,
+      \ g:projectNoninteractiveResolvers
+      \ )
+
+After:
+  Restore
